@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -51,7 +53,9 @@ func getToken(config *oauth2.Config) *oauth2.Token {
 // Get token through OAuth2 authorization using web browser
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Open the following URL using your web browser, and allow accessing to your YouTube channel: \n%v\n\n", authURL)
+	fmt.Printf("Open the following URL using your web browser, and allow accessing to your Google Calendar: \n%v\n\n", authURL)
+	openBrowser(authURL)
+
 	fmt.Printf("After authentication, please input the code: ")
 
 	var authCode string
@@ -87,4 +91,17 @@ func saveToken(path string, token *oauth2.Token) {
 	}
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
+}
+
+// Open URL using the default web browser
+func openBrowser(url string) {
+	os := runtime.GOOS
+	switch os {
+	case "windows":
+		exec.Command("start", url).Start()
+	case "darwin":
+		exec.Command("open", url).Start()
+	case "linux":
+		exec.Command("xgd-open", url).Start()
+	}
 }
