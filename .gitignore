@@ -1,4 +1,4 @@
-credentials.json
+client_secret*.json
 token.json
 
 ### https://raw.github.com/github/gitignore/3bb7b4b767f3f8df07e362dfa03c8bd425f16d32/Go.gitignore
