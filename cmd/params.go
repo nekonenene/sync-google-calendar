@@ -54,6 +54,4 @@ func ParseParameters() {
 	}
 	date = date.AddDate(0, 0, 1)
 	params.EndTimeOfRange = time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, time.Local)
-
-	fmt.Println(params)
 }
