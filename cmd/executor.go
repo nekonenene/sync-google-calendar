@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"google.golang.org/api/calendar/v3"
@@ -89,7 +90,13 @@ func Exec() {
 		}
 	}
 
-	fmt.Println("以下のイベントを作成します：")
+	if len(createEvents) == 0 {
+		fmt.Println("作成すべきイベントがありませんでした（同じ開始・終了時刻のイベントや終日イベントは作成されません）")
+		fmt.Println("終了します")
+		return
+	}
+
+	fmt.Println("\n以下のイベントを作成します：")
 	for _, event := range createEvents {
 		date := event.Start.DateTime
 		if date == "" {
@@ -97,4 +104,29 @@ func Exec() {
 		}
 		fmt.Printf("%s (Starting at: %s)\n", event.Summary, date)
 	}
+
+	fmt.Printf("\nよろしいですか？[y|n]: ")
+	var response string
+	fmt.Scanln(&response)
+	if !strings.EqualFold(response, "y") && !strings.EqualFold(response, "yes") {
+		fmt.Println("終了します")
+		return
+	}
+
+	for _, event := range createEvents {
+		insertEvent := &calendar.Event{
+			Start:          event.Start,
+			End:            event.End,
+			Summary:        event.Summary,
+			Description:    event.Description,
+			Location:       event.Location,
+			ConferenceData: event.ConferenceData,
+		}
+
+		_, err := toAccountService.Events.Insert("primary", insertEvent).Do()
+		if err != nil {
+			log.Fatalf("Failed to insert an event: %v", err)
+		}
+	}
+	fmt.Println("完了しました")
 }
