@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 	"runtime"
 
@@ -28,7 +26,7 @@ func GetService() (*calendar.Service, error) {
 		return nil, err
 	}
 
-	tok := getToken(config)
+	tok := getTokenFromWeb(config)
 	ctx := context.Background()
 	service, err := calendar.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, tok)))
 	if err != nil {
@@ -36,18 +34,6 @@ func GetService() (*calendar.Service, error) {
 	}
 
 	return service, nil
-}
-
-// Get token from local file or OAuth2 authorization
-func getToken(config *oauth2.Config) *oauth2.Token {
-	// The file token.json stores the user's access and refresh tokens, and is
-	// created automatically when the authorization flow completes for the first time.
-	tok, err := tokenFromFile(params.TokenFilePath)
-	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(params.TokenFilePath, tok)
-	}
-	return tok
 }
 
 // Get token through OAuth2 authorization using web browser
@@ -68,29 +54,6 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 		log.Fatalf("Unable to retrieve token from web: %v", err)
 	}
 	return tok
-}
-
-// Get token from local
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	tok := &oauth2.Token{}
-	err = json.NewDecoder(f).Decode(tok)
-	return tok, err
-}
-
-// Store token
-func saveToken(path string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", path)
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatalf("Unable to cache oauth token: %v", err)
-	}
-	defer f.Close()
-	json.NewEncoder(f).Encode(token)
 }
 
 // Open URL using the default web browser
