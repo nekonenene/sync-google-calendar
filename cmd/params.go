@@ -11,6 +11,7 @@ type parameters struct {
 	CredentialFilePath string
 	StartTimeOfRange   time.Time
 	EndTimeOfRange     time.Time
+	UseTokenCache      bool
 }
 
 var params parameters
@@ -21,6 +22,7 @@ func ParseParameters() {
 	flag.StringVar(&params.CredentialFilePath, "credential-file", DefaultCredentialFilePath, "(Option) Download client_secret_*.json from Google Developer Console, and specifiled path")
 	flag.StringVar(&startDateStr, "start-date", "", fmt.Sprintf("(Option) Starting date of the range for the sync (Default: %s)", time.Now().Format("2006/01/02")))
 	flag.StringVar(&endDateStr, "end-date", "", fmt.Sprintf("(Option) Ending date of the range for the sync (Default: %s)", time.Now().Add(DefaultDateRangeLength).Format("2006/01/02")))
+	flag.BoolVar(&params.UseTokenCache, "use-token-cache", false, "*Experimental* If true, use token file to skip authentication")
 	flag.Parse()
 
 	var date time.Time
