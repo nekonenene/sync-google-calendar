@@ -114,11 +114,25 @@ func Exec() {
 	}
 
 	for _, event := range createEvents {
+		var summary, description string
+		if params.TitleOverwrite != "" {
+			summary = params.TitleOverwrite
+		} else {
+			summary = event.Summary
+		}
+		summary = params.TitlePrefix + summary
+
+		if params.DescriptionOverwrite != "" {
+			description = params.DescriptionOverwrite
+		} else {
+			description = event.Description
+		}
+
 		insertEvent := &calendar.Event{
 			Start:          event.Start,
 			End:            event.End,
-			Summary:        event.Summary,
-			Description:    event.Description,
+			Summary:        summary,
+			Description:    description,
 			Location:       event.Location,
 			ConferenceData: event.ConferenceData,
 		}
