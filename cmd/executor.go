@@ -78,7 +78,6 @@ func Exec() {
 
 		existDuplicateEvent := false
 		for _, toAccountEvent := range toAccountEvents.Items {
-			fmt.Printf("%v vs %v\n", startTime, toAccountEvent.Start.DateTime)
 			if startTime == toAccountEvent.Start.DateTime && endTime == toAccountEvent.End.DateTime {
 				existDuplicateEvent = true
 				break
