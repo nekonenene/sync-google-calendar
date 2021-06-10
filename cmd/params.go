@@ -47,7 +47,7 @@ func ParseParameters() {
 	if endDateStr == "" {
 		date = time.Now().Add(DefaultDateRangeLength)
 	} else {
-		date, err = time.Parse("2006/01/02", startDateStr)
+		date, err = time.Parse("2006/01/02", endDateStr)
 		if err != nil {
 			log.Fatalf("Invalid date format (Expect: 2006/01/02)")
 		}
